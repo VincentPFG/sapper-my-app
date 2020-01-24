@@ -9,6 +9,8 @@ alias = svelte: path.resolve 'node_modules', 'svelte'
 extensions = ['.mjs', '.js', '.json', '.svelte', '.html']
 mainFields = ['svelte', 'module', 'browser', 'main']
 
+preprocess = (require 'svelte-preprocess')()
+
 module.exports =
 	client: {
 		entry: config.client.entry()
@@ -19,11 +21,11 @@ module.exports =
 				test: /\.(svelte|html)$/
 				use:
 					loader: 'svelte-loader'
-					options: {dev, hydratable: yes, hotReload: no}
+					options: {dev, hydratable: yes, hotReload: no, preprocess}
 			]
 		mode
 		plugins: [
-			new (webpack.DefinePlugin)
+			new webpack.DefinePlugin
 				'process.browser': yes
 				'process.env.NODE_ENV': JSON.stringify mode
 		].filter Boolean
@@ -40,7 +42,7 @@ module.exports =
 				test: /\.(svelte|html)$/
 				use:
 					loader: 'svelte-loader'
-					options: {css: no, generate: 'ssr', dev}
+					options: {css: no, generate: 'ssr', dev, preprocess}
 			]
 		mode: process.env.NODE_ENV
 		performance: hints: no
